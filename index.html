@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run for Recovery - Pocket Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Billabong&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:#FF6F61;
+  --accent2:#FFD194;
+  --bg-dark:#111;
+  --text-dark:#fff;
+  --glass-dark:rgba(255,255,255,0.08);
+  --blue-checkbox:#4aa3ff;
+  --completed-habit:#4aa3ff;
+  --whatsapp:#25D366;
+}
+body {margin:0;font-family:'Poppins',sans-serif;background:var(--bg-dark);color:var(--text-dark);transition:0.4s;}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem;}
+header h1{font-family:'Billabong',cursive;font-size:2.8rem;color:var(--accent);margin:0;}
+header h1 small{font-size:0.7rem;color:#aaa;display:block;}
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;padding:1rem;max-width:1200px;margin:0 auto 3rem;}
+.card{background:var(--glass-dark);border-radius:18px;padding:1rem;box-shadow:0 8px 20px rgba(255,255,255,0.05);transition:.4s;}
+h2{margin:0 0 .6rem 0;font-size:1.1rem;}
+input.sobriety-input{width:100%;max-width:320px;padding:.75rem;border-radius:14px;font-size:1rem;border:2px solid var(--accent);text-align:center;background:rgba(255,255,255,0.03);color:inherit;outline:none;}
+.time-boxes{display:flex;justify-content:space-between;gap:.6rem;margin-top:.6rem;}
+.time-box{flex:1;background:rgba(255,255,255,0.03);border-radius:12px;padding:.6rem;text-align:center;transition:.3s;}
+.time-box span{display:block;font-weight:700;font-size:1.25rem;color:var(--accent);}
+button.primary{padding:.8rem 1rem;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:700;margin-top:.6rem;transition:.4s;outline:none;}
+button.primary:hover{transform:scale(1.02);}
+button.primary.completed{background:var(--completed-habit);}
+.breathing-circle{width:120px;height:120px;margin:1rem auto;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;color:#fff;text-align:center;transition: transform 4s ease-in-out, box-shadow 0.3s;cursor:pointer;outline:none;}
+.breathing-circle.expand{transform:scale(1.35);box-shadow:0 0 30px rgba(255,111,97,0.6);}
+textarea#journalInput{width:90%;max-width:100%;margin:0 auto;display:block;height:120px;border-radius:16px;border:none;padding:.7rem;font-size:1rem;color:inherit;resize:vertical;background: rgba(255,255,255,0.02);box-shadow:0 6px 18px rgba(0,0,0,0.3) inset;transition:.3s;text-align:center;outline:none;}
+#journalEntries{max-height:180px;overflow-y:auto;margin-top:.6rem;padding:0;list-style:none;}
+#journalEntries li{background: var(--glass-dark);padding:.6rem;border-radius:12px;margin:0 0 .4rem 0;width:90%;text-align:center;transition:.3s;}
+.grid-three{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+footer{background: rgba(255,255,255,0.02);padding:1.25rem;text-align:center;border-top-left-radius:14px;border-top-right-radius:14px;margin-top:2rem;}
+a{color:var(--accent);text-decoration:none;font-weight:600;}
+.mood-pills {display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:8px;}
+.mood-pill {padding:6px 12px;border-radius:20px;background:rgba(255,255,255,0.1);cursor:pointer;transition:.3s;user-select:none;outline:none;}
+.mood-pill.active{background:var(--accent);color:#fff;font-weight:600;transform:scale(1.05);}
+.habit-item {margin:0.5rem 0; display:flex;align-items:center; gap:0.6rem;}
+.habit-item input[type="checkbox"] {accent-color: var(--blue-checkbox); width:18px; height:18px;}
+button:focus {outline:none;}
+.whatsapp-btn {background:var(--whatsapp);color:#fff;border-radius:50px;padding:.8rem 1rem;font-weight:700;cursor:pointer;border:none;transition:.3s;}
+.whatsapp-btn:hover {transform:scale(1.05);}
+</style>
+</head>
+<body>
+<header>
+<h1>Run for Recovery<small>One Day at a Time Pocket Tool</small></h1>
+</header>
+<main>
+
+<!-- Sobriety Timer -->
+<div class="card">
+<h2>Sobriety Timer</h2>
+<input type="date" id="sobrietyDate" class="sobriety-input"/>
+<div class="time-boxes">
+<div class="time-box"><span id="days">00</span>Days</div>
+<div class="time-box"><span id="hours">00</span>Hours</div>
+<div class="time-box"><span id="minutes">00</span>Minutes</div>
+<div class="time-box"><span id="seconds">00</span>Seconds</div>
+</div>
+<button class="primary" id="shareSobrietyBtn">Copy Sobriety Date</button>
+</div>
+
+<!-- Box Breathing -->
+<div class="card">
+<h2>Box Breathing</h2>
+<div class="breathing-circle" id="breathingCircle">Tap to Start</div>
+</div>
+
+<!-- Gratitude List -->
+<div class="card">
+<h2>Gratitude List</h2>
+<div class="mood-pills" id="moodPills"></div>
+<textarea id="journalInput" placeholder="Write your thoughts..."></textarea>
+<button class="primary" id="saveJournalBtn">Save Entry</button>
+<button class="primary" id="copyJournalBtn">Copy Last Entry</button>
+<button class="primary" id="clearJournalBtn">Clear</button>
+<ul id="journalEntries"></ul>
+</div>
+
+<!-- Daily Reflection Button -->
+<div style="text-align:center;">
+<button class="primary" id="dailyReflectionBtn" style="background:#4aa3ff;padding:1rem 2rem;font-size:1.1rem;margin-bottom:1rem;">Daily Reflection</button>
+</div>
+
+<!-- Daily Habits -->
+<div class="card">
+<h2>Daily Habits</h2>
+<div class="habit-item"><input type="checkbox" class="habit-check"> Pray / Reflect</div>
+<div class="habit-item"><input type="checkbox" class="habit-check"> Call Three Other Alcoholics</div>
+<div class="habit-item"><input type="checkbox" class="habit-check"> Read Daily Reflection</div>
+<div class="habit-item"><input type="checkbox" class="habit-check"> Hit a Meeting</div>
+<button class="primary" id="completeHabitsBtn">Complete Habits</button>
+</div>
+
+<!-- Daily Action & Bible Verse -->
+<div class="grid-three">
+<div class="card">
+<h2>Daily Action</h2>
+<div id="dailyAction">Loading...</div>
+<button class="primary" id="nextActionBtn">Generate New Action</button>
+</div>
+<div class="card">
+<h2>Bible Verse</h2>
+<div id="dailyVerse">Loading...</div>
+<button class="primary" id="nextVerseBtn">Next Verse</button>
+<button class="primary" id="shareVerseBtn">Copy Verse</button>
+</div>
+</div>
+
+<!-- Meetings & Big Book -->
+<div class="card">
+<h2>Meetings & Big Book</h2>
+<p><a href="https://share.google/N2GBTcHyAsaMHwJQk" target="_blank">Online Zoom Meetings</a></p>
+<p><a href="https://www.aa.org/pages/en_US/meeting-guide" target="_blank">In-Person Meetings</a></p>
+<p><a href="https://share.google/JYTyAAInrrq5kVxbm" target="_blank">Digital Big Book</a></p>
+</div>
+
+<!-- Explore Trails -->
+<div class="card">
+<h2>Explore Trails</h2>
+<p><a href="https://www.alltrails.com/" target="_blank">AllTrails: Trail Guides & Maps</a></p>
+</div>
+
+<!-- Support -->
+<div class="card" style="text-align:center;">
+<h2>Support</h2>
+<p>Your support helps keep this tool running and available for everyone in recovery.</p>
+<a href="https://venmo.com/u/Corey-Gay-3" target="_blank" class="primary">Donate via Venmo</a>
+</div>
+
+<!-- WhatsApp Community -->
+<div class="card" style="text-align:center;">
+<h2>WhatsApp Community</h2>
+<p>Join our WhatsApp recovery group and connect with others in real time.</p>
+<a href="https://chat.whatsapp.com/C618xzdKzG7F6b1WiAvf0u" target="_blank" class="whatsapp-btn">Join Our WhatsApp Group</a>
+</div>
+
+</main>
+
+<footer>
+<p>Designed by Corey © RunForRecovery Productions</p>
+<p>Follow us: <a href="https://www.instagram.com/reverserunners" target="_blank">Instagram</a></p>
+<p>Suicide & Support Hotline: <strong>1-800-273-8255</strong></p>
+</footer>
+
+<script>
+// Sobriety Timer
+const sobrietyDateInput = document.getElementById('sobrietyDate');
+sobrietyDateInput.value = localStorage.getItem('sobrietyDate') || '';
+function updateTimer(){
+  if(!sobrietyDateInput.value) return;
+  const now = new Date();
+  const date = new Date(sobrietyDateInput.value);
+  let diff = now - date;
+  if(diff < 0) diff = 0;
+  document.getElementById('days').textContent = Math.floor(diff/1000/60/60/24);
+  document.getElementById('hours').textContent = Math.floor(diff/1000/60/60)%24;
+  document.getElementById('minutes').textContent = Math.floor(diff/1000/60)%60;
+  document.getElementById('seconds').textContent = Math.floor(diff/1000)%60;
+}
+sobrietyDateInput.addEventListener('change', ()=>{
+  localStorage.setItem('sobrietyDate', sobrietyDateInput.value);
+  updateTimer();
+});
+setInterval(updateTimer,1000);
+document.getElementById('shareSobrietyBtn').addEventListener('click', ()=>{
+  if(!sobrietyDateInput.value) return;
+  navigator.clipboard.writeText(`My sobriety date is ${sobrietyDateInput.value} - Run for Recovery 2025`);
+});
+
+// Box Breathing
+const circle = document.getElementById('breathingCircle');
+let steps = [{label:'Inhale', expand:true},{label:'Hold', expand:true},{label:'Exhale', expand:false},{label:'Hold', expand:false}];
+let stepIndex = 0, breathingActive=false, intervalId=null;
+function breatheStep(){ if(!breathingActive) return; const step=steps[stepIndex]; circle.textContent=step.label; step.expand?circle.classList.add('expand'):circle.classList.remove('expand'); stepIndex=(stepIndex+1)%steps.length; }
+circle.addEventListener('click', ()=> {
+  if(!breathingActive){ breathingActive=true; stepIndex=0; breatheStep(); intervalId=setInterval(breatheStep,4000); }
+  else { breathingActive=false; clearInterval(intervalId); circle.textContent='Tap to Start'; circle.classList.remove('expand'); }
+});
+
+// Daily Habits
+const habitChecks=document.querySelectorAll('.habit-check');
+const completeBtn=document.getElementById('completeHabitsBtn');
+habitChecks.forEach(cb=>{cb.addEventListener('change', ()=>{
+  const allChecked=[...habitChecks].every(c=>c.checked);
+  completeBtn.textContent=allChecked?"Habits Complete!":"Complete Habits";
+  completeBtn.classList.toggle('completed',allChecked);
+})});
+
+// Journal
+const moods=['😀','😔','😡','😢','😌','😱','😇'];
+const moodContainer=document.getElementById('moodPills');
+moods.forEach(m=>{
+  const pill=document.createElement('div');
+  pill.className='mood-pill';
+  pill.textContent=m;
+  pill.addEventListener('click', ()=> pill.classList.toggle('active'));
+  moodContainer.appendChild(pill);
+});
+const saveJournal = document.getElementById('saveJournalBtn');
+const copyJournal = document.getElementById('copyJournalBtn');
+const clearJournalBtn = document.getElementById('clearJournalBtn');
+const journalInput = document.getElementById('journalInput');
+const journalEntries = document.getElementById('journalEntries');
+function loadJournals(){
+  const data = JSON.parse(localStorage.getItem('journals')||'[]');
+  journalEntries.innerHTML='';
+  data.forEach(entry=>{
+    const li=document.createElement('li');
+    li.textContent = `${entry.mood} ${entry.text}`;
+    journalEntries.appendChild(li);
+  });
+}
+saveJournal.addEventListener('click', ()=>{
+  const mood=document.querySelector('.mood-pill.active')?.textContent||'';
+  const text=journalInput.value.trim();
+  if(!text) return;
+  const data = JSON.parse(localStorage.getItem('journals')||'[]');
+  data.push({mood,text});
+  localStorage.setItem('journals',JSON.stringify(data));
+  journalInput.value='';
+  document.querySelectorAll('.mood-pill.active').forEach(p=>p.classList.remove('active'));
+  loadJournals();
+});
+copyJournal.addEventListener('click', ()=>{
+  const data = JSON.parse(localStorage.getItem('journals')||'[]');
+  if(data.length===0) return;
+  const last = data[data.length-1];
+  navigator.clipboard.writeText(`Last journal entry:\n${last.mood} ${last.text} - Run for Recovery 2025`);
+});
+clearJournalBtn.addEventListener('click', ()=>{
+  localStorage.removeItem('journals');
+  loadJournals();
+});
+loadJournals();
+
+// Daily Actions & Bible Verse
+const actions=['Take a walk','Meditate for 10 min','Call a friend','Write a gratitude note'];
+const verses=[
+  'Philippians 4:13 - I can do all things through Christ.',
+  'Psalm 23:1 - The Lord is my shepherd.',
+  'Romans 12:2 - Be transformed by the renewing of your mind.',
+  'Jeremiah 29:11 - For I know the plans I have for you.',
+  'Isaiah 40:31 - Those who hope in the Lord will renew their strength.',
+  'Proverbs 3:5 - Trust in the Lord with all your heart.',
+  'Matthew 11:28 - Come to me, all you who are weary and burdened, and I will give you rest.'
+];
+const dailyAction = document.getElementById('dailyAction');
+const dailyVerse = document.getElementById('dailyVerse');
+document.getElementById('nextActionBtn').addEventListener('click', ()=> dailyAction.textContent=actions[Math.floor(Math.random()*actions.length)]);
+document.getElementById('nextVerseBtn').addEventListener('click', ()=> dailyVerse.textContent=verses[Math.floor(Math.random()*verses.length)]);
+document.getElementById('shareVerseBtn').addEventListener('click', ()=>{
+  navigator.clipboard.writeText(`${dailyVerse.textContent} - Run for Recovery 2025`);
+});
+</script>
+</body>
+</html>
